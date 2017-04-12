@@ -1,4 +1,4 @@
-# GitLocal
+# git_local
 
 A lightweight git command line wrapper in Ruby
 
