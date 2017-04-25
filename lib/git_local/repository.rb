@@ -1,6 +1,7 @@
 module GitLocal
   class Repository
     class NotFound < StandardError
+
     end
 
     def initialize(org:, repo:, branch:, local_directory:)
@@ -48,10 +49,11 @@ module GitLocal
       head = popened_io.read.chomp.split("\n").last
       Process.wait(popened_io.pid)
 
-      popened_io = IO.popen("(cd #{path} && git remote update && git rev-parse origin/#{branch})")
+      popened_io = IO.popen("(cd #{path} && git remote update && git rev-parse origin/#{branch}) 2>&1")
+      out = popened_io.map { |line| line.chomp } || []
       remote = popened_io.read.chomp
       Process.wait(popened_io.pid)
-      raise NotFound unless $?.to_i == 0
+      raise NotFound.new.exception(out.join(' ')) unless $?.to_i == 0
 
       remote != head
     end
@@ -67,10 +69,11 @@ module GitLocal
     def clone_and_checkout
       FileUtils.makedirs(repo_path) unless Dir.exist?(repo_path)
 
-      popened_io = IO.popen("(cd #{repo_path} && git clone git@github.com:#{org_repo}.git --branch #{branch} --single-branch #{branch} && cd #{path})")
+      popened_io = IO.popen("(cd #{repo_path} && git clone git@github.com:#{org_repo}.git --branch #{branch} --single-branch #{branch} && cd #{path}) 2>&1")
+      out = popened_io.map { |line| line.chomp } || []
       Process.wait(popened_io.pid)
 
-      raise NotFound unless $?.to_i == 0
+      raise NotFound.new.exception(out.join(' ')) unless $?.to_i == 0
     end
 
     def org_repo
