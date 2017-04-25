@@ -16,7 +16,7 @@ describe GitLocal::Repository do
         expect(IO).to receive(:popen).with("(cd #{local_directory}/cool_org/awesome_repo/brunch-1 && git rev-parse HEAD)").and_return(double(read: "something", pid: 1))
         dbl2 = double(read: "something-else", pid: 2)
         expect(IO).to receive(:popen).with("(cd #{local_directory}/cool_org/awesome_repo/brunch-1 && git remote update && git rev-parse origin/brunch-1) 2>&1").and_return(dbl2)
-        allow(dbl2).to receive(:each)
+        allow(dbl2).to receive(:map)
         expect(IO).to receive(:popen).with("(cd #{local_directory}/cool_org/awesome_repo/brunch-1 && git pull)").and_return(double(read: "content", pid: 3))
         expect(Process).to receive(:wait).with(1)
         expect(Process).to receive(:wait).with(2)
@@ -31,7 +31,7 @@ describe GitLocal::Repository do
         expect(IO).to receive(:popen).with("(cd #{local_directory}/cool_org/awesome_repo/brunch-1 && git rev-parse HEAD)").and_return(double(read: "something", pid: 1))
         dbl = double(read: "something-else", pid: 2)
         expect(IO).to receive(:popen).with("(cd #{local_directory}/cool_org/awesome_repo/brunch-1 && git remote update && git rev-parse origin/brunch-1) 2>&1").and_return(dbl)
-        allow(dbl).to receive(:each)
+        allow(dbl).to receive(:map)
         expect(Process).to receive(:wait).with(1)
         expect(Process).to receive(:wait).with(2)
         expect($?).to receive(:to_i).and_return(1)
@@ -49,7 +49,7 @@ describe GitLocal::Repository do
         expect(IO).to receive(:popen).with(
           "(cd #{local_directory}/cool_org/awesome_repo && git clone git@github.com:cool_org/awesome_repo.git --branch brunch-1 --single-branch brunch-1 && cd #{local_directory}/cool_org/awesome_repo/brunch-1) 2>&1"
         ).and_return(dbl)
-        allow(dbl).to receive(:each)
+        allow(dbl).to receive(:map)
         expect(Process).to receive(:wait).with(1)
 
         action
@@ -62,15 +62,15 @@ describe GitLocal::Repository do
           RSpec::Mocks.configuration.allow_message_expectations_on_nil = true
 
           expect(Dir.exist?("#{local_directory}/Some/Bad/")).to be false
-          dbl = double(pid: 1)
+          dbl = double({pid: 1})
           expect(IO).to receive(:popen).with(
             "(cd #{local_directory}/Some/Bad && git clone git@github.com:Some/Bad.git --branch Repo --single-branch Repo && cd #{local_directory}/Some/Bad/Repo) 2>&1"
           ).and_return(dbl)
-          allow(dbl).to receive(:each)
+          expect(dbl).to receive(:map).and_return(['test', 'message'])
           expect(Process).to receive(:wait).with(1)
           expect($?).to receive(:to_i).and_return(1)
 
-          expect { described_class.new(bad_args).get }.to raise_error(described_class::NotFound )
+          expect { described_class.new(bad_args).get }.to raise_error(described_class::NotFound).with_message('test message')
 
           RSpec::Mocks.configuration.allow_message_expectations_on_nil = nil
         end
@@ -195,7 +195,7 @@ describe GitLocal::Repository do
       expect(IO).to receive(:popen).with("(cd #{local_directory}/cool_org/awesome_repo/brunch-1 && git rev-parse HEAD)").and_return(double(read: "something", pid: 1))
       dbl = double(read: "something-else", pid: 2)
       expect(IO).to receive(:popen).with("(cd #{local_directory}/cool_org/awesome_repo/brunch-1 && git remote update && git rev-parse origin/brunch-1) 2>&1").and_return(dbl)
-      allow(dbl).to receive(:each)
+      allow(dbl).to receive(:map)
       expect(Process).to receive(:wait).with(1)
       expect(Process).to receive(:wait).with(2)
 
@@ -206,7 +206,7 @@ describe GitLocal::Repository do
       expect(IO).to receive(:popen).with("(cd #{local_directory}/cool_org/awesome_repo/brunch-1 && git rev-parse HEAD)").and_return(double(read: "something", pid: 1))
       dbl = double(read: "something", pid: 2)
       expect(IO).to receive(:popen).with("(cd #{local_directory}/cool_org/awesome_repo/brunch-1 && git remote update && git rev-parse origin/brunch-1) 2>&1").and_return(dbl)
-      allow(dbl).to receive(:each)
+      allow(dbl).to receive(:map)
       expect(Process).to receive(:wait).with(1)
       expect(Process).to receive(:wait).with(2)
 
