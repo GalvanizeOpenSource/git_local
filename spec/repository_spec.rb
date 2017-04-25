@@ -213,4 +213,17 @@ describe GitLocal::Repository do
       expect(described_class.new(valid_args).new_commit_on_remote?).to eq(false)
     end
   end
+
+  describe "#check_for_special_characters" do
+
+    it "raises an error if the passed arguments contain unexpected characters" do
+      bad_args = { org: "Some!", repo: "$Bad", branch: "Repo^%", local_directory: local_directory }
+      expect { described_class.new(bad_args) }.to raise_error(described_class::InvalidArgument)
+    end
+
+    it "allows letter, numbers, dashes, underscores and hashes" do
+      args = { org: "Some/totally", repo: "fine_to#use", branch: "arg-123", local_directory: local_directory }
+      expect { described_class.new(args) }.to_not raise_error
+    end
+  end
 end
