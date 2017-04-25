@@ -3,7 +3,11 @@ module GitLocal
     class NotFound < StandardError
     end
 
+    class InvalidArgument < StandardError
+    end
+
     def initialize(org:, repo:, branch:, local_directory:)
+      check_for_special_characters(org, repo, branch, local_directory)
       @org = org
       @repo = repo
       @branch = branch
@@ -58,6 +62,13 @@ module GitLocal
 
     def path
       @path ||= "#{local_directory}/#{org_repo_branch}"
+    end
+
+    def check_for_special_characters(*args)
+      regexp = Regexp.new(/([A-Za-z0-9\-\_\/]+)/)
+      args.each do |arg|
+        raise InvalidArgument if arg.gsub(regexp, '').length > 0
+      end
     end
 
     private
