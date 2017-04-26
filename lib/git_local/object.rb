@@ -17,7 +17,7 @@ module GitLocal
       return contents if max_lines.nil?
 
       File.foreach(path).first(max_lines).join
-    rescue StandardError => e
+    rescue StandardError
       raise NotFound
     end
 

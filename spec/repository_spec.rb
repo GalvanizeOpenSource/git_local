@@ -62,15 +62,15 @@ describe GitLocal::Repository do
           RSpec::Mocks.configuration.allow_message_expectations_on_nil = true
 
           expect(Dir.exist?("#{local_directory}/Some/Bad/")).to be false
-          dbl = double({pid: 1})
+          dbl = double(pid: 1)
           expect(IO).to receive(:popen).with(
             "(cd #{local_directory}/Some/Bad && git clone git@github.com:Some/Bad.git --branch Repo --single-branch Repo && cd #{local_directory}/Some/Bad/Repo) 2>&1"
           ).and_return(dbl)
-          expect(dbl).to receive(:map).and_return(['test', 'message'])
+          expect(dbl).to receive(:map).and_return(["test", "message"])
           expect(Process).to receive(:wait).with(1)
           expect($?).to receive(:to_i).and_return(1)
 
-          expect { described_class.new(bad_args).get }.to raise_error(described_class::NotFound).with_message('test message')
+          expect { described_class.new(bad_args).get }.to raise_error(described_class::NotFound).with_message("test message")
 
           RSpec::Mocks.configuration.allow_message_expectations_on_nil = nil
         end
@@ -215,7 +215,6 @@ describe GitLocal::Repository do
   end
 
   describe "#check_for_special_characters" do
-
     it "raises an error if the passed arguments contain unexpected characters" do
       bad_args = { org: "Some!", repo: "$Bad", branch: "Repo^%", local_directory: local_directory }
       expect { described_class.new(bad_args) }.to raise_error(described_class::InvalidArgument)

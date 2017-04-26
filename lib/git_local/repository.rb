@@ -1,7 +1,6 @@
 module GitLocal
   class Repository
     class NotFound < StandardError
-
     end
 
     class InvalidArgument < StandardError
@@ -54,10 +53,10 @@ module GitLocal
       Process.wait(popened_io.pid)
 
       popened_io = IO.popen("(cd #{path} && git remote update && git rev-parse origin/#{branch}) 2>&1")
-      out = popened_io.map { |line| line.chomp } || []
+      out = popened_io.map(&:chomp) || []
       remote = popened_io.read.chomp
       Process.wait(popened_io.pid)
-      raise NotFound.new.exception(out.join(' ')) unless $?.to_i == 0
+      raise NotFound.new.exception(out.join(" ")) unless $?.to_i == 0
 
       remote != head
     end
@@ -69,7 +68,7 @@ module GitLocal
     def check_for_special_characters(*args)
       regexp = Regexp.new(/([A-Za-z0-9\-\_\/#]+)/)
       args.each do |arg|
-        raise InvalidArgument if arg.gsub(regexp, '').length > 0
+        raise InvalidArgument unless arg.gsub(regexp, "").empty?
       end
     end
 
@@ -81,10 +80,10 @@ module GitLocal
       FileUtils.makedirs(repo_path) unless Dir.exist?(repo_path)
 
       popened_io = IO.popen("(cd #{repo_path} && git clone git@github.com:#{org_repo}.git --branch #{branch} --single-branch #{branch} && cd #{path}) 2>&1")
-      out = popened_io.map { |line| line.chomp } || []
+      out = popened_io.map(&:chomp) || []
       Process.wait(popened_io.pid)
 
-      raise NotFound.new.exception(out.join(' ')) unless $?.to_i == 0
+      raise NotFound.new.exception(out.join(" ")) unless $?.to_i == 0
     end
 
     def org_repo

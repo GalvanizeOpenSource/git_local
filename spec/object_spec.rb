@@ -89,7 +89,7 @@ describe GitLocal::Object do
 
     it "returns the file size in MB" do
       gfo = described_class.new("#{local_directory}/cool_org/awesome_repo/brunch-1/file1.md")
-      expect(gfo.size).to eq (5.0)
+      expect(gfo.size).to eq(5.0)
     end
   end
 end

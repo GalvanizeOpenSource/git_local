@@ -1,4 +1,5 @@
-require 'fileutils'
+require "fileutils"
+require "securerandom"
 
 module GitLocal
   module TestHelpers
