@@ -1,0 +1,126 @@
+Style/Semicolon:
+  Enabled: true
+
+Lint/AmbiguousBlockAssociation:
+  Enabled: false
+
+Lint/AssignmentInCondition:
+  Enabled: true
+
+Lint/EndAlignment:
+  Enabled: true
+
+Lint/HandleExceptions:
+  Enabled: true
+
+Lint/IneffectiveAccessModifier:
+  Enabled: true
+
+Lint/UselessAccessModifier:
+  Enabled: true
+
+Lint/RescueException:
+  Enabled: true
+
+Metrics/AbcSize:
+  Enabled: true
+  Max: 100
+
+Metrics/BlockLength:
+  Enabled: true
+  Max: 1200
+
+Metrics/BlockNesting:
+  Enabled: true
+  Max: 6
+
+Metrics/ClassLength:
+  Enabled: true
+  Max: 500
+
+Metrics/CyclomaticComplexity:
+  Enabled: true
+  Max: 25
+
+Metrics/LineLength:
+  Enabled: true
+  Max: 70000
+
+Metrics/MethodLength:
+  Enabled: true
+  Max: 100
+
+Metrics/ModuleLength:
+  Enabled: true
+  Max: 500
+
+Metrics/ParameterLists:
+  Enabled: true
+  Max: 6
+
+Metrics/PerceivedComplexity:
+  Enabled: true
+  Max: 26
+
+Style/DotPosition:
+  EnforcedStyle: trailing
+
+Style/MultilineMethodCallIndentation:
+  EnforcedStyle: indented_relative_to_receiver
+
+Style/SpecialGlobalVars:
+  EnforcedStyle: use_perl_names
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Performance/StartWith:
+  Enabled: false
+
+Performance/TimesMap:
+  Enabled: false
+
+Security/YAMLLoad:
+  Enabled: false
+
+Style/AndOr:
+  Enabled: false
+
+Style/CaseIndentation:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/EmptyMethod:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/MutableConstant:
+  Enabled: false
+
+Style/NumericLiteralPrefix:
+  Enabled: false
+
+Style/NumericLiterals:
+  Enabled: false
+
+Style/NumericPredicate:
+  Enabled: false
+
+Style/RedundantParentheses:
+  Enabled: false
+
+Style/RegexpLiteral:
+  Enabled: false
+
+Style/UnneededPercentQ:
+  Enabled: false
+
+Style/VariableName:
+  Enabled: true
+
+Style/WordArray:
+  Enabled: false

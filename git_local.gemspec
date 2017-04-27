@@ -1,7 +1,7 @@
 # coding: utf-8
-lib = File.expand_path('../lib', __FILE__)
-$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'git_local/version'
+lib = File.expand_path("../lib", __FILE__)
+$:.unshift(lib) unless $:.include?(lib)
+require "git_local/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "git_local"
@@ -22,6 +22,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "pry", "~> 0.10.4"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
+  spec.add_development_dependency "rspec_junit_formatter"
+  spec.add_development_dependency "rubocop"
 
-  spec.required_ruby_version = '~> 2.0'
+  spec.required_ruby_version = "~> 2.0"
 end
