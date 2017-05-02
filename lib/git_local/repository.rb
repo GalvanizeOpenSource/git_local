@@ -27,7 +27,7 @@ module GitLocal
       searchable_repo_path = repo_path.end_with?("/") ? repo_path : "#{repo_path}/"
 
       Dir.glob("#{searchable_repo_path}*").each_with_object([]) do |filename, git_files|
-        next if %w(. ..).include?(filename) || File.extname(filename) == ".zip" || File.directory?(filename)
+        next if %w[. ..].include?(filename) || File.extname(filename) == ".zip" || File.directory?(filename)
 
         git_files << GitLocal::Object.new(filename)
       end
@@ -66,7 +66,7 @@ module GitLocal
     end
 
     def check_for_special_characters(*args)
-      regexp = Regexp.new(/([A-Za-z0-9\-\_\/#]+)/)
+      regexp = Regexp.new(/([A-Za-z0-9\-\_\.\/#]+)/)
       args.each do |arg|
         raise InvalidArgument unless arg.gsub(regexp, "").empty?
       end
