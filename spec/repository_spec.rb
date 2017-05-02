@@ -220,8 +220,8 @@ describe GitLocal::Repository do
       expect { described_class.new(bad_args) }.to raise_error(described_class::InvalidArgument)
     end
 
-    it "allows letter, numbers, dashes, underscores and hashes" do
-      args = { org: "Some/totally", repo: "fine_to#use", branch: "arg-123", local_directory: local_directory }
+    it "allows letter, numbers, dashes, underscores, periods and hashes" do
+      args = { org: "So.me/totally", repo: "fine_to#use", branch: "arg-123", local_directory: local_directory }
       expect { described_class.new(args) }.to_not raise_error
     end
   end
