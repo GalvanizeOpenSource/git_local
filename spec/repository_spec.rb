@@ -13,11 +13,11 @@ describe GitLocal::Repository do
       before { create_git_repository(valid_args) }
 
       it "checks out and pulls a repo if there is a new commit on remote" do
-        expect(IO).to receive(:popen).with("(cd #{local_directory}/cool_org/awesome_repo/brunch-1 && git rev-parse HEAD)").and_return(double(read: "something", pid: 1))
+        expect(IO).to receive(:popen).with("(cd #{local_directory}/cool_org/awesome_repo/#{valid_args[:branch]} && git rev-parse HEAD)").and_return(double(read: "something", pid: 1))
         dbl2 = double(read: "something-else", pid: 2)
-        expect(IO).to receive(:popen).with("(cd #{local_directory}/cool_org/awesome_repo/brunch-1 && git remote update && git rev-parse origin/brunch-1) 2>&1").and_return(dbl2)
+        expect(IO).to receive(:popen).with("(cd #{local_directory}/cool_org/awesome_repo/#{valid_args[:branch]} && git remote update && git rev-parse origin/#{valid_args[:branch]}) 2>&1").and_return(dbl2)
         allow(dbl2).to receive(:map)
-        expect(IO).to receive(:popen).with("(cd #{local_directory}/cool_org/awesome_repo/brunch-1 && git pull)").and_return(double(read: "content", pid: 3))
+        expect(IO).to receive(:popen).with("(cd #{local_directory}/cool_org/awesome_repo/#{valid_args[:branch]} && git fetch && git reset origin/#{valid_args[:branch]} --hard)").and_return(double(read: "content", pid: 3))
         expect(Process).to receive(:wait).with(1)
         expect(Process).to receive(:wait).with(2)
         expect(Process).to receive(:wait).with(3)

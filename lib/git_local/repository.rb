@@ -15,7 +15,7 @@ module GitLocal
     end
 
     def get
-      Dir.exist?(path) && new_commit_on_remote? ? pull : clone_and_checkout
+      Dir.exist?(path) && new_commit_on_remote? ? reset_to_latest_from_origin : clone_and_checkout
     end
 
     def file_object(file_path)
@@ -94,8 +94,8 @@ module GitLocal
       @org_repo_branch ||= "#{org}/#{repo}/#{branch}"
     end
 
-    def pull
-      Process.wait(IO.popen("(cd #{path} && git pull)").pid)
+    def reset_to_latest_from_origin
+      Process.wait(IO.popen("(cd #{path} && git fetch && git reset origin/#{branch} --hard)").pid)
     end
 
     def repo_path
