@@ -42,7 +42,7 @@ describe GitLocal::Repository do
       end
     end
 
-    context "repo does not exist" do
+    context "repo does not exist locally" do
       it "clones a repo that doesn't already exist in file system" do
         expect(Dir.exist?("#{local_directory}/cool_org/awesome_repo/")).to be false
         dbl = double(pid: 1)
@@ -223,6 +223,21 @@ describe GitLocal::Repository do
     it "allows letter, numbers, dashes, underscores, periods and hashes" do
       args = { org: "So.me/totally", repo: "fine_to#use", branch: "arg-123", local_directory: local_directory }
       expect { described_class.new(args) }.to_not raise_error
+    end
+  end
+
+  describe "host override" do
+    let(:host) { "git.sum.enterprise.org" }
+    let(:action) { described_class.new(valid_args.merge(host: host)).get }
+
+    it "clones and checks out repositories from non-github hosts" do
+      dbl = double(pid: 1)
+      expect(IO).to receive(:popen) do |command|
+        expect(command).to include(host)
+      end.and_return(dbl)
+      allow(dbl).to receive(:map)
+      expect(Process).to receive(:wait).with(1)
+      action
     end
   end
 end

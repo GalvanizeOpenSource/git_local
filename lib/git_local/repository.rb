@@ -6,12 +6,15 @@ module GitLocal
     class InvalidArgument < StandardError
     end
 
-    def initialize(org:, repo:, branch:, local_directory:)
+    GITHUB_HOST = "github.com".freeze
+
+    def initialize(org:, repo:, branch:, local_directory:, host: GITHUB_HOST)
       check_for_special_characters(org, repo, branch, local_directory)
+      @branch = branch
+      @host = host
+      @local_directory = local_directory
       @org = org
       @repo = repo
-      @branch = branch
-      @local_directory = local_directory
     end
 
     def get
@@ -74,12 +77,12 @@ module GitLocal
 
     private
 
-    attr_reader :org, :repo, :branch, :local_directory
+    attr_reader :branch, :host, :local_directory, :org, :repo
 
     def clone_and_checkout
       FileUtils.makedirs(repo_path) unless Dir.exist?(repo_path)
 
-      popened_io = IO.popen("(cd #{repo_path} && git clone git@github.com:#{org_repo}.git --branch #{branch} --single-branch #{branch} && cd #{path}) 2>&1")
+      popened_io = IO.popen("(cd #{repo_path} && git clone git@#{host}:#{org_repo}.git --branch #{branch} --single-branch #{branch} && cd #{path}) 2>&1")
       out = popened_io.map(&:chomp) || []
       Process.wait(popened_io.pid)
 
