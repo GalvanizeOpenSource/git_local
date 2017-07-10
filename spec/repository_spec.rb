@@ -240,4 +240,30 @@ describe GitLocal::Repository do
       action
     end
   end
+
+  describe "protocol override" do
+    let(:action) { described_class.new(valid_args.merge(protocol: protocol)).get }
+
+    context "valid protocol" do
+      let(:protocol) { "HTTPS" }
+
+      it "clones and checks out repositories using the protocol provided" do
+        dbl = double(pid: 1)
+        expect(IO).to receive(:popen) do |command|
+          expect(command).to include(protocol.downcase)
+        end.and_return(dbl)
+        allow(dbl).to receive(:map)
+        expect(Process).to receive(:wait).with(1)
+        action
+      end
+    end
+
+    context "invalid protocol" do
+      let(:protocol) { "FTP" }
+
+      it "raises an error if the protocol is neither SSH nor HTTPS" do
+        expect { action }.to raise_error(GitLocal::Repository::InvalidProtocol)
+      end
+    end
+  end
 end
