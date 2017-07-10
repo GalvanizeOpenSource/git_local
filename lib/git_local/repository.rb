@@ -6,15 +6,24 @@ module GitLocal
     class InvalidArgument < StandardError
     end
 
-    GITHUB_HOST = "github.com".freeze
+    class InvalidProtocol < StandardError
+    end
 
-    def initialize(org:, repo:, branch:, local_directory:, host: GITHUB_HOST)
+    GITHUB_HOST = "github.com".freeze
+    VALID_PROTOCOLS = {
+      ssh: "SSH",
+      https: "HTTPS"
+    }.freeze
+
+    def initialize(org:, repo:, branch:, local_directory:, host: GITHUB_HOST, protocol: VALID_PROTOCOLS[:ssh])
       check_for_special_characters(org, repo, branch, local_directory)
       @branch = branch
       @host = host
       @local_directory = local_directory
       @org = org
       @repo = repo
+      @protocol = protocol
+      validate_protocol
     end
 
     def get
@@ -82,7 +91,7 @@ module GitLocal
     def clone_and_checkout
       FileUtils.makedirs(repo_path) unless Dir.exist?(repo_path)
 
-      popened_io = IO.popen("(cd #{repo_path} && git clone git@#{host}:#{org_repo}.git --branch #{branch} --single-branch #{branch} && cd #{path}) 2>&1")
+      popened_io = IO.popen("(cd #{repo_path} && git clone #{repo_endpoint} --branch #{branch} --single-branch #{branch} && cd #{path}) 2>&1")
       out = popened_io.map(&:chomp) || []
       Process.wait(popened_io.pid)
 
@@ -103,6 +112,14 @@ module GitLocal
 
     def repo_path
       @repo_path ||= "#{local_directory}/#{org_repo}"
+    end
+
+    def validate_protocol
+      raise InvalidProtocol, "Protocol must be either HTTPS or SSH." unless VALID_PROTOCOLS.values.include?(@protocol)
+    end
+
+    def repo_endpoint
+      @protocol == VALID_PROTOCOLS[:ssh] ? "git@#{host}:#{org_repo}.git" : "https://#{host}/#{org_repo}.git"
     end
   end
 end
